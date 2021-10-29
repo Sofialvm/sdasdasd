@@ -1,0 +1,58 @@
+public void CrearDocumentoCuentaCorriente(ModeloRendicionRecibosImpresion modelo, string rutaDirectorio, string nombreArchivo, string rutaImagen, string RS, string CT)
+       {
+           using (ExcelPackage p = new ExcelPackage())
+           {
+               int colInicial = 2;
+               int filaInicial = 1;
+               int col = colInicial;
+               int fila = filaInicial;
+
+               //List<int> totales = new List<int>();
+               double saldoperddjj = 0, intddjjemision = 0, saldoddjjacumulado = 0, saldoperefica = 0, inteficaemision = 0, saldoeeficacumulado = 0;
+               p.Workbook.Properties.Author = "Control.AR";
+               p.Workbook.Properties.Title = "Cuenta Corriente";
+               p.Workbook.Properties.Company = "Efica";
+               p.Workbook.Worksheets.Add("Cheques");
+
+               ExcelWorksheet ws = p.Workbook.Worksheets[1];
+               ws.Name = "Hoja1";
+               ws.Column(col).Width = 50;
+               ws.Column(col + 1).Width = 30;
+
+               // Título
+               ws.Cells[fila, col].Value = "Cuenta Corriente";
+               ws.Cells[fila, col].AutoFitColumns();
+
+               //ws.Cells[fila, 4].Value = "Razon Social";
+               //ws.Cells[fila, 4].AutoFitColumns();
+               //ws.Cells[fila+1, 4].Value = "Nº CUIT";
+               fila++;
+
+               // Fecha
+               ws.Cells[fila, col].Value = "Fecha ";
+               col++;
+               ws.Cells[fila, col].Value = DateTime.Now.Day.ToString() + "/" + DateTime.Now.Month.ToString() + "/" + DateTime.Now.Year.ToString();
+
+               fila++;
+               col = colInicial;
+
+               //agragado para que inserte cheques en el mismo excel
+               //de recibos rendidos
+               foreach (CabeceraColumna cabecera in modelo.CabecerasColumnasCheques)
+               {
+                   if (!string.IsNullOrEmpty(cabecera.NombreCabecera.ToString()))
+                   {
+                       if (cabecera.NombreCabecera.ToString() == "Año" || cabecera.NombreCabecera.ToString() == "fecvto" || cabecera.NombreCabecera.ToString() == "fecha")
+                       {
+                           ws.Cells[fila, col].Style.Font.Size = 12;
+                           ws.Cells[fila, col].Style.Font.Bold = true;
+                           ws.Cells[fila, col].Style.Font.UnderLine = true;
+                           ws.Cells[fila, col].Value = cabecera.NombreCabecera;
+                           ws.Cells[fila, col].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                           ws.Cells[fila, col].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.CornflowerBlue);
+                           col++;
+                       }
+                       else
+                       {
+                           ws.Cells[fila, col].Style.Font.Size = 12;
+                           ws.Cells[fila, col].Style.Font.Bold = true;
